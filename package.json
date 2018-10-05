@@ -1,0 +1,22 @@
+{
+  "name": "http-api-project-prototype",
+  "version": "1.0.0",
+  "engines": {
+    "node": "10.6.0",
+    "npm": "6.1.0"
+  },
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "author": "Kevin Barrett",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}

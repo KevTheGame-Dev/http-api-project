@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+  <title>Our simple HTTP server</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+  <script type="text/babel">
+    var nameValue = '';
+    const allergies = {};
+
+    const init = () => {
+      const nameField = document.querySelector('#nameField');
+      const nutsField = document.querySelector('#nutsField');
+      const dairyField = document.querySelector('#dairyField');
+      const glutenField = document.querySelector('#glutenField');
+      const soyField = document.querySelector('#soyField');
+      const shellfishField = document.querySelector('#shellfishField');
+      const submitUser = document.querySelector('#submitUser');
+
+      var requestValue = '';
+
+      const handleRequest = (e) => sendAjax(e, requestValue);
+
+
+      submitUser.addEventListener('submit', (e) => {
+        nameValue = nameField.value;
+        
+        allergies = { 'nuts': nutsField.value, 
+                      'dairy': dairyField.value, 
+                      'gluten': glutenField.value,
+                      'soy': soyField.value,
+                      'shellfish': shellfishField.value};
+
+        requestValue = '/addUser';
+        console.log(requestValue);
+        
+        handleRequest(e);
+      });
+
+      //const sendButton = document.querySelector("#send");
+      //submitUser.addEventListener('click', handleRequest);
+
+    }
+
+    const handleResponse = (e, xhr) => {
+      const content = document.querySelector("#content");
+      
+      //const requestTypeSelector = document.querySelector('#type');
+      //var requestType = requestTypeSelector.options[requestTypeSelector.selectedIndex].value;
+      var requestType = 'application/json';
+
+      var obj = '';
+      if(requestType === 'application/json'){
+        obj = JSON.parse(xhr.response);
+
+        switch(xhr.status){
+          case 200:
+            content.innerHTML = `<h3>Success</h3> <div><p>${obj.message}</p></div>`;
+            break;
+          case 400:
+            content.innerHTML = `<h3>Bad request</h3> <div><p>${obj.message}</p></div>`;
+            break;
+          case 401:
+            content.innerHTML = `<h3>Unauthorized request</h3> <div><p>${obj.message}</p></div>`;
+            break;
+          case 403:
+            content.innerHTML = `<h3>Forbidden request</h3> <div><p>${obj.message}</p></div>`;
+            break;
+          case 500:
+            content.innerHTML = `<h3>Bad request</h3> <div><p>${obj.message}</p></div>`;
+            break;
+          case 501:
+            content.innerHTML = `<h3>Not implemented</h3> <div><p>${obj.message}</p></div>`;
+            break;
+          case 404:
+            content.innerHTML = `<h3>Resource not found</h3> <div><p>${obj.message}</p></div>`;
+            break;
+          default:
+            content.innerHTML = `<h3>Error code not implemented</h3>`;
+            break;
+        }
+      }
+      else{
+        obj = new DOMParser().parseFromString(xhr.response, 'text/xml');
+
+        switch(xhr.status){
+          case 200:
+            content.innerHTML = `<h3>Success</h3> <div><p>${obj.getElementsByTagName('message')[0].innerHTML}</p></div>`;
+            break;
+          case 400:
+            content.innerHTML = `<h3>Bad request</h3> <div><p>${obj.getElementsByTagName('message')[0].innerHTML}</p></div>`;
+            break;
+          case 401:
+            content.innerHTML = `<h3>Unauthorized request</h3> <div><p>${obj.getElementsByTagName('message')[0].innerHTML}</p></div>`;
+            break;
+          case 403:
+            content.innerHTML = `<h3>Forbidden request</h3> <div><p>${obj.getElementsByTagName('message')[0].innerHTML}</p></div>`;
+            break;
+          case 500:
+            content.innerHTML = `<h3>Bad request</h3> <div><p>${obj.getElementsByTagName('message')[0].innerHTML}</p></div>`;
+            break;
+          case 501:
+            content.innerHTML = `<h3>Not implemented</h3> <div><p>${obj.getElementsByTagName('message')[0].innerHTML}</p></div>`;
+            break;
+          case 404:
+            content.innerHTML = `<h3>Resource not found</h3> <div><p>${obj.getElementsByTagName('message')[0].innerHTML}</p></div>`;
+            break;
+          default:
+            content.innerHTML = `<h3>Error code not implemented</h3>`;
+            break;
+        }
+      }
+      console.log(obj);
+      
+      e.preventDefault();
+      return false;
+    }
+    const sendAjax = (e, url) => {
+      const xhr = new XMLHttpRequest();
+
+      console.log(url);
+      if(url === '/addUser'){
+        console.log('adding user');
+
+        //url = url += `?name=${nameValue}&age=${ageValue}`;
+        xhr.open('POST', url);
+        var requestType = 'application/json';
+
+        var params = JSON.stringify({ 'name': nameValue, 'age': ageValue});
+
+        xhr.setRequestHeader("Accept", requestType);
+        xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
+        xhr.onload = () => handleResponse(e, xhr);
+        //xhr.send(params);
+        xhr.send(`name=${nameValue}&allergies=${allergies}&`);
+      }
+      else{
+        console.log('HI');
+        const requestTypeSelector = document.querySelector('#methodSelect');
+        var requestType = requestTypeSelector.options[requestTypeSelector.selectedIndex].value;
+        
+        console.log(requestType);
+        if(requestType === "HEAD"){
+          xhr.open('HEAD', url);
+
+          
+          var requestType = 'application/json';
+          console.log(requestType);
+
+          xhr.setRequestHeader("Accept", requestType);
+          xhr.onload = () => handleResponse(e, xhr);
+          xhr.send();
+        }
+        else{
+          console.log('WHAT');
+          xhr.open('GET', url);
+
+          
+          var requestType = 'application/json';
+          console.log(requestType);
+
+          xhr.setRequestHeader("Accept", requestType);
+          xhr.onload = () => handleResponse(e, xhr);
+          xhr.send();
+        }
+      }
+
+      e.preventDefault();
+      return false;
+    }
+
+    window.onload = init;
+  </script>
+</head>
+<body>
+  <section id="top">
+    <h3>Potluck Planning</h3>
+    <form id="nameForm" action="/addUser" method="post">
+      <label for="name">Name: </label>
+      <input id="nameField" type="text" name="name" />
+
+      <label for="food">Bringing</label>
+      <input id="foodField" type="text" name="food"/>
+
+      <h5>Allergents</h5>
+      <input id="nutsCheck" type="checkbox" name="nuts" value="true"> <label for="nuts">Nuts</label>
+      <input id="dairyCheck" type="checkbox" name="dairy" value="true"> <label for="dairy">Dairy</label>
+      <input id="glutenCheck" type="checkbox" name="gluten" value="true"> <label for="gluten">Gluten</label>
+      <input id="soyCheck" type="checkbox" name="soy" value="true"> <label for="soy">Soy</label>
+      <input id="shellfishCheck" type="checkbox" name="shellfish" value="true"> <label for="shellfish">Shellfish</label>
+
+      <input id="submitUser" type="submit" value="Add User" />
+    </form>
+    <form id="userForm" action="/getUsers" method="get">
+      <select id='urlField'>
+        <option value='/getUsers'>/getUsers</option>
+        <option value='/notReal'>/notReal</option>
+      </select>
+      <select id="methodSelect">
+        <option value="GET">GET</option>
+        <option value="HEAD">HEAD</option>
+      </select>
+      <input type="submit" value="Get User" />
+    </form>
+  </section>
+  <section id="content">
+    <table id="potluckList">
+      <thead>
+        <td><h4>Name</h4></td>
+        <td><h4>Bringing</h4></td>
+        <td><h4>Allergens</h4></td>
+        <td><h4>Allergic To</h4></td>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Kristen</td>
+          <td>Potato Salad</td>
+          <td>Dairy</td>
+          <td style="background-color: #ff6961">Nuts, Dairy</td>
+        </tr>
+        <tr>
+          <td>Rose</td>
+          <td>Mac n Cheese</td>
+          <td>Dairy, Gluten</td>
+          <td>Soy</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</body>
+</html>
