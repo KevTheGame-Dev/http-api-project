@@ -3,6 +3,59 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
+  background-color: #e8fccf;
+  color: #134611;
+  font-family: 'Roboto', sans-serif;
+}
+
+#header{
+  width: 100%;
+  height: 80px;
+  background-color: #3da35d;
+  color: #134611;
+  font-size: 250%;
+}
+
+#header #title{
+  margin: 0px 30px;
+  float: left;
+}
+
+#login{
+  text-align: left;
+  margin: auto;
+  width: 370px;
+  margin-top: 80px;
+}
+
+.button{
+  text-align: right;
+  background-color: #3e8914;
+  border: none;
+  color: #e8fccf;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  margin: 4px 6px;
+  cursor: pointer;
+  border-radius: 16px;
+}
+
+.button:hover{
+  background-color: #96e072;
+  color: #134611;
+}
+
+#tidbit{
+  font-style: italic;
+  font-size: 90%;
+}
+
+#loginError{
+  color: #a33d5d;
+  margin-top: 100px;
+  font-size: 2em;
+  text-align: center;
 }
 
 #top {
@@ -28,4 +81,72 @@ html, body {
 #potluckList tr td{
   font-size: 16px;
   padding: 3px 5px;
+}
+
+#navButtons{
+  float: right;
+  margin: 20px 20px;
+}
+
+#navButtons button{
+  display: inline-block;
+}
+
+#user_username{
+  margin-left: 30px;
+  font-size: 150%;
+}
+
+#potluckForm{
+  text-align: left;
+  width: calc(30% - 30px);
+  float: left;
+  margin-left: 30px;
+}
+
+#allergiesPopup{
+  display: none;
+  position: fixed;
+  z-index: 1;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+#popup{
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888888;
+  width: 40%;
+}
+
+#potluckData{
+  float: right;
+  width: calc(70%);
+}
+#potluckTable{
+  width: 80%;
+  margin: auto;
+  text-align: center;
+}
+
+#potluckTable table{
+  margin: 100px auto 0px auto;
+  background-color: white;
+  border-collapse: collapse;
+  width: 80%;
+}
+
+#potluckTable table thead td{
+  background-color: #3e8914;
+  color: #e8fccf;
+  border-bottom: solid 2px black;
+}
+
+#potluckTable table td{
+  padding: 5px 10px;
 }

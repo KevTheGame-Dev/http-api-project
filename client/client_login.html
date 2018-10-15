@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Potluck Planner</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+  <script src="/handle_login.js"></script>
+  <script src="/post_login.js"></script>
+  <script type="text/babel">
+
+    const init = () => {
+        if(window.localStorage.getItem('potluckID')){
+            console.log("Welcome back!");
+        }
+
+      //grab form
+      const loginForm = document.querySelector('#loginForm');
+      
+      //create handler
+      const login = (e) => sendLogin_Post(e, loginForm);
+      
+      //attach submit event (for clicking submit or hitting enter)
+      loginForm.addEventListener('submit', login);
+    };
+    window.onload = init;
+  </script>
+</head>
+<body>
+  <section id="header">
+    <h1 id="title">Potluck Planner</h1>
+  </section>
+  <section id="loginSection">
+    <div id="login">
+      <form id="loginForm" action="/login" method="post">
+          <label for="username">Username: </label>
+          <input id="usernameField" type="text" name="username" />
+          <br/>
+          <label for="password" style="font-size: 102%">Password: </label>
+          <input id="passwordField" type="password" name="password"/>
+          
+          <input id="submitUser" class="button" type="submit" value="Login" />
+      </form>
+      <p id="tidbit">Enter login info. If you're new, this will create a user</p>
+    </div>
+  </section>
+  <section id="loginError">
+  </section>
+</body>
+</html>

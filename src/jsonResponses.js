@@ -1,4 +1,4 @@
-const users = {};
+const handleData = require('./handleData.js');
 
 const respondJSON = (request, response, status, object) => {
   if (request.headers.accept === 'text/xml') {
@@ -11,54 +11,106 @@ const respondJSON = (request, response, status, object) => {
   response.end();
 };
 
-const getUsers = (request, response) => {
-  console.log(request.method);
-  if (request.method === 'HEAD') {
+
+const handleLogin = (request, response, results) => {
+  if (results.success === true) {
     const responseJSON = {
-      message: 'Successful response',
+      message: results.message,
+      userID: results.id,
     };
 
-    respondJSON(request, response, 200, responseJSON);
+    respondJSON(request, response, results.httpStatus, responseJSON);
   } else {
     const responseJSON = {
-      message: users,
+      message: results.message,
+      error: results.error,
     };
-
-    respondJSON(request, response, 200, responseJSON);
+    respondJSON(request, response, results.httpStatus, responseJSON);
   }
 };
 
-const addUsers = (request, response, params) => {
-  console.log(params);
-  if (params.name === '') {
-    const responseJSON = {
-      message: 'Missing name parameter',
-      id: 'Missing Param',
-    };
-    respondJSON(request, response, 400, responseJSON);
-  } else if (params.age === '') {
-    const responseJSON = {
-      message: 'Missing age parameter',
-      id: 'Missing Param',
-    };
-    respondJSON(request, response, 400, responseJSON);
-  } else if (params.name in users) {
-    users[params.name] = params;
-    const responseJSON = {
-      message: 'Updated user',
-    };
-    console.log(users);
+const getUsername = (request, response, userID) => {
+  console.log('getting username...');
+  handleData.confirmUser(userID, (userFound) => {
+    if (userFound) {
+      console.log('userID found');
+      handleData.readData(userID, 'username', (usernameReq) => {
+        if (usernameReq.httpStatus === 200) {
+          console.log(usernameReq);
+          const responseJSON = {
+            username: usernameReq.data,
+          };
+          console.log('username found');
+          respondJSON(request, response, usernameReq.httpStatus, responseJSON);
+        } else {
+          const responseJSON = {
+            message: usernameReq.message,
+          };
+          console.log(usernameReq.message);
+          respondJSON(request, response, usernameReq.httpStatus, responseJSON);
+        }
+      });
+    } else {
+      const responseJSON = {
+        message: 'userID not found',
+      };
 
-    respondJSON(request, response, 204, responseJSON);
-  } else {
-    users[params.name] = params;
-    const responseJSON = {
-      message: 'Added user',
-    };
-    console.log(users);
+      respondJSON(request, response, 404, responseJSON);
+    }
+  });
+};
 
-    respondJSON(request, response, 201, responseJSON);
-  }
+const updateAllergies = (request, response, userID, params) => {
+  handleData.confirmUser(userID, (userFound) => {
+    if (userFound) {
+      handleData.updateAllergies(userID, params);
+    } else {
+      const responseJSON = {
+        message: 'userID not found',
+      };
+
+      respondJSON(request, response, 404, responseJSON);
+    }
+  });
+};
+
+const getAllergies = (request, response) => {
+  handleData.getAllergyData((data) => {
+    const responseJSON = {
+      data,
+    };
+
+    respondJSON(request, response, 200, responseJSON);
+  });
+};
+
+const getPotluckData = (request, response) => {
+  handleData.getPotluckData((data) => {
+    const responseJSON = {
+      data,
+    };
+
+    respondJSON(request, response, 200, responseJSON);
+  });
+};
+
+const putPotluckData = (request, response, params) => {
+  handleData.postPotluckData(params, (data) => {
+    console.log(data);
+    if (data.httpStatus === 201) {
+      const responseJSON = {
+        message: 'Added potluck entry',
+      };
+
+      respondJSON(request, response, 201, responseJSON);
+    } else {
+      const responseJSON = {
+        message: data.message,
+      };
+
+      respondJSON(request, response, data.status, responseJSON);
+    }
+  });
 };
 
 const notFound = (request, response) => {
@@ -71,7 +123,11 @@ const notFound = (request, response) => {
 };
 
 module.exports = {
-  getUsers,
-  addUsers,
+  handleLogin,
+  getUsername,
+  updateAllergies,
+  getAllergies,
+  getPotluckData,
+  putPotluckData,
   notFound,
 };
