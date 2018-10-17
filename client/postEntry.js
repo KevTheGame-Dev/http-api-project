@@ -6,7 +6,6 @@ const sendPost = (e, nameForm) => {
     const nameMethod = nameForm.getAttribute('method');
     
     //grab the form's name and age fields so we can check user input
-    const nameField = nameForm.querySelector('#nameField');
     const foodField = nameForm.querySelector('#foodField');
     const nutsCheck = nameForm.querySelector('#nutsCheck');
     const dairyCheck = nameForm.querySelector('#dairyCheck');
@@ -38,7 +37,7 @@ const sendPost = (e, nameForm) => {
     //So ours might look like  name=test&age=22
     //Again the 'name' fields in the form are the variable names in the string
     //and the variable names the server will look for.
-    const formData = `name=${nameField.value}&food=${foodField.value}&nuts=${nutsCheck.checked}&dairy=${dairyCheck.checked}&gluten=${glutenCheck.checked}&soy=${soyCheck.checked}&shellfish=${shellfishCheck.checked}`;
+    const formData = `name=${window.localStorage.getItem('potluckUsername')}&food=${foodField.value}&nuts=${nutsCheck.checked}&dairy=${dairyCheck.checked}&gluten=${glutenCheck.checked}&soy=${soyCheck.checked}&shellfish=${shellfishCheck.checked}`;
     
     //send our request with the data
     xhr.send(formData);

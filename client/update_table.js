@@ -60,7 +60,7 @@ const highlightUnmetNeeds = (userData) => {
     var allergies;
     var foodTemp = JSON.parse(userData.response);
     var usersAllergens = Object.keys(foodTemp['data']);
-
+    console.log(foodTemp['data']);
     getAllergyData((data) => { 
         //reset table colors
         var potluckTable = document.querySelector('#potluckTableTable');
@@ -71,29 +71,38 @@ const highlightUnmetNeeds = (userData) => {
 
         allergies = JSON.parse(data.response);
 
+
         let users = Object.keys(allergies['data']);
         for(var i = 0; i < users.length; i++){
             let user = users[i];
-            let userAllergens = usersAllergens[i];
             
             let userKeys = Object.keys(allergies['data'][user]);
-            let allergenKeys = Object.keys(foodTemp['data'][userAllergens]);
             
+            let highlightUser = true;
+            if(userKeys.includes('allergies')){
 
-            if(userKeys.includes('allergies') && allergenKeys.includes('allergens')){
-                for(var j = 0; j < allergies['data'][user]['allergies'].length; j++){
+                let userAllergies = allergies['data'][user]['allergies'];
 
-                   if(!(allergies['data'][user]['allergies'][j] in foodTemp['data'][userAllergens]['allergens'])){
-                       console.log(potluckTable.rows[0]);
-                       for(var k = 0; k < potluckTable.rows.length; k++){
-                           console.log(potluckTable.rows[k]);
-                           if(potluckTable.rows[k].cells[0].innerHTML === user){
-                                potluckTable.rows[k].cells[0].style.backgroundColor = "#a33d5d";
-                                potluckTable.rows[k].cells[0].setAttribute('title', 'Allergy requirements not met!');
-                           }
-                       }
-                   }
+                for(let d = 0; d < usersAllergens.length; d++){
+                    let dishKeys = Object.keys(foodTemp['data'][usersAllergens[d]]);
+                    if(dishKeys.includes('allergens')){
+                        let dishAllergens = foodTemp['data'][usersAllergens[d]]['allergens'];
 
+                        let temp = userAllergies.filter(x => dishAllergens.includes(x));
+
+                        if(!temp.length > 0) highlightUser = false;
+                    }
+                }
+            }
+            console.log(highlightUser);
+            if(highlightUser){
+                for(var k = 0; k < potluckTable.rows.length; k++){
+                    console.log(potluckTable.rows[k].cells[0].innerHTML);
+                    console.log(user);
+                    if(potluckTable.rows[k].cells[0].innerHTML === user){
+                        potluckTable.rows[k].cells[0].style.backgroundColor = "#a33d5d";
+                        potluckTable.rows[k].cells[0].setAttribute('title', 'Allergy requirements not met!');
+                    }
                 }
             }
         }

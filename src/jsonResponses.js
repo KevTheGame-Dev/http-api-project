@@ -17,6 +17,7 @@ const handleLogin = (request, response, results) => {
     const responseJSON = {
       message: results.message,
       userID: results.id,
+      username: results.username,
     };
 
     respondJSON(request, response, results.httpStatus, responseJSON);

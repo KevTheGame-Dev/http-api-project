@@ -10,7 +10,7 @@ const createUser = (username, password, userData) => {
   fs.writeFileSync(`${__dirname}/../data/user_data.json`, newUserDataString, 'utf8');
 
   return {
-    success: true, id: newUserData[username].id, message: 'User created', httpStatus: 201,
+    success: true, id: newUserData[username].id, username, message: 'User created', httpStatus: 201,
   };
 };
 
@@ -28,7 +28,7 @@ const login = (request, response, username, password) => {
       if (username in userData) {
         if (userData[username].password === password) {
           loginResponse = {
-            success: true, id: userData[username].id, message: 'Successful login.', httpStatus: 200,
+            success: true, id: userData[username].id, username, message: 'Successful login.', httpStatus: 200,
           };
         } else {
           loginResponse = {

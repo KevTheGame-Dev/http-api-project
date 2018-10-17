@@ -5,6 +5,7 @@ const handle_login = (xhr) => {
     
     if(xhr.status === 200 || xhr.status === 201){
         window.localStorage.setItem('potluckID', obj.userID);
+        window.localStorage.setItem('potluckUsername', obj.username);
         window.location = '/potluck';
     }
     else{
